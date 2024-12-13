@@ -23,7 +23,7 @@ const XSLTEditor = () => {
         setError(null);
       }
     }
-  }, [xslContent, xmlContent]);
+  }, [xslContent, xmlContent, lastValidOutput]);
 
   const handleSaveOutput = () => {
     const blob = new Blob([output], { type: 'text/xml' });

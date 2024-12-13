@@ -6,7 +6,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-900">
       <div className="container mx-auto py-8">
         <h1 className="text-3xl font-bold text-white mb-8 text-center">
-          Viet's XML Transform Tool
+          Viet&apos;s XML Transform Tool
         </h1>
         <ErrorBoundary>
           <XSLTEditor />
