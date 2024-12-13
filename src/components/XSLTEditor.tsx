@@ -48,6 +48,7 @@ const XSLTEditor = () => {
   const [xslContent, setXslContent] = useState(initialXslContent);
   const [xmlContent, setXmlContent] = useState(initialXmlContent);
   const [output, setOutput] = useState('');
+  const [lastSuccessfulOutput, setLastSuccessfulOutput] = useState('');
   const [error, setError] = useState<{ line?: number; column?: number; message: string } | null>(null);
 
   useEffect(() => {
@@ -56,17 +57,18 @@ const XSLTEditor = () => {
         const { result, error } = xsltTransform(xslContent, xmlContent);
         if (error) {
           setError(error);
-          setOutput('');
+          setOutput(lastSuccessfulOutput);
         } else {
           setOutput(result);
+          setLastSuccessfulOutput(result);
           setError(null);
         }
       } catch (e) {
         setError({ message: e instanceof Error ? e.message : String(e) });
-        setOutput('');
+        setOutput(lastSuccessfulOutput);
       }
     }
-  }, [xslContent, xmlContent]);
+  }, [xslContent, xmlContent, lastSuccessfulOutput]);
 
 
   const handleSaveOutput = () => {
@@ -136,7 +138,7 @@ const XSLTEditor = () => {
           </div>
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
-              value={output}
+              value={error ? lastSuccessfulOutput : output}
               language="xml"
               readOnly={true}
               id="output-content"
