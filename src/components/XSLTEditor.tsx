@@ -25,6 +25,18 @@ const XSLTEditor = () => {
     }
   }, [xslContent, xmlContent]);
 
+  const handleSaveOutput = () => {
+    const blob = new Blob([output], { type: 'text/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'transformed-output.xml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-120px)]">
       {error && (
@@ -47,7 +59,7 @@ const XSLTEditor = () => {
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
               value={xslContent}
-              onChange={setXslContent}
+              onChange={(value) => setXslContent(value || '')}
               language="xml"
             />
           </div>
@@ -57,13 +69,23 @@ const XSLTEditor = () => {
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
               value={xmlContent}
-              onChange={setXmlContent}
+              onChange={(value) => setXmlContent(value || '')}
               language="xml"
             />
           </div>
         </div>
         <div className="space-y-2 h-full">
-          <h2 className="text-xl font-bold text-white">Output</h2>
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-white">Output</h2>
+            {output && (
+              <button
+                onClick={handleSaveOutput}
+                className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+              >
+                Save Output
+              </button>
+            )}
+          </div>
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
               value={output}

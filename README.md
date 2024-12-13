@@ -1,17 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# XSLT Transform Tool
+
+A web-based XSLT transformation tool built with Next.js and Monaco Editor. This tool allows you to write and transform XML documents using XSLT stylesheets in real-time.
+
+## Features
+
+- Real-time XSLT transformation
+- Syntax highlighting for XML/XSLT
+- Error reporting with line numbers
+- Dark theme Monaco editor
+- Downloadable output
+- Responsive design
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Monaco Editor
+- TailwindCSS
+- XSLTProcessor API
 
 ## Getting Started
 
-First, run the development server:
+First, clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

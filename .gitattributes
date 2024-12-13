@@ -1,0 +1,36 @@
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# TypeScript and JavaScript files
+*.ts text
+*.tsx text
+*.js text
+*.jsx text
+
+# JSON files
+*.json text
+
+# CSS files
+*.css text
+
+# HTML files
+*.html text
+
+# Markdown files
+*.md text
+
+# Images should be treated as binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.ico binary
+*.svg text
+
+# Font files
+*.ttf binary
+*.eot binary
+*.woff binary
+*.woff2 binary
+
+# Ignore npm lock file
+package-lock.json linguist-generated=true 

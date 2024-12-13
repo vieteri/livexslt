@@ -13,12 +13,14 @@ loader.config({
   }
 });
 
-const CodeEditor = ({ value, onChange, language, readOnly = false }: {
+interface CodeEditorProps {
   value: string;
   onChange?: (value: string | undefined) => void;
   language: string;
   readOnly?: boolean;
-}) => {
+}
+
+const CodeEditor = ({ value, onChange, language, readOnly = false }: CodeEditorProps) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const initialValueRef = useRef(value);
 
@@ -66,6 +68,7 @@ const CodeEditor = ({ value, onChange, language, readOnly = false }: {
       value={value}
       onChange={onChange}
       onMount={handleEditorDidMount}
+      theme="vs-dark"
       options={{
         minimap: { enabled: false },
         scrollBeyondLastLine: false,
@@ -74,7 +77,9 @@ const CodeEditor = ({ value, onChange, language, readOnly = false }: {
         theme: 'vs-dark',
         automaticLayout: true,
         copyWithSyntaxHighlighting: true,
-        bracketPairColorization: true,
+        bracketPairColorization: {
+          enabled: true
+        },
       }}
       loading={<div>Loading editor...</div>}
     />
