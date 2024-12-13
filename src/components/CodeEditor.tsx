@@ -1,10 +1,6 @@
-"use client";
-
 import { useEffect, useRef } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
-
-// Configure Monaco loader
 import { loader } from '@monaco-editor/react';
 
 loader.config({
@@ -18,35 +14,18 @@ interface CodeEditorProps {
   onChange?: (value: string | undefined) => void;
   language: string;
   readOnly?: boolean;
+  id?: string;
+  name?: string;
 }
 
-const CodeEditor = ({ value, onChange, language, readOnly = false }: CodeEditorProps) => {
+const CodeEditor = ({ value, onChange, language, readOnly = false, id, name }: CodeEditorProps) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const initialValueRef = useRef(value);
 
-  useEffect(() => {
-    if (editorRef.current && value !== editorRef.current.getValue()) {
-      const editor = editorRef.current;
-      const model = editor.getModel();
-      if (model) {
-        // Create an editor operation that preserves undo stack
-        model.pushEditOperations(
-          [],
-          [{
-            range: model.getFullModelRange(),
-            text: value
-          }],
-          () => null
-        );
-      }
-    }
-  }, [value]);
 
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor;
     editor.layout();
-    
-    // Set initial value properly
     editor.setValue(initialValueRef.current);
     
     const resizeObserver = new ResizeObserver(() => {
@@ -55,10 +34,26 @@ const CodeEditor = ({ value, onChange, language, readOnly = false }: CodeEditorP
     
     resizeObserver.observe(editor.getContainerDomNode());
     
+    setTimeout(() => {
+      const container = editor.getContainerDomNode();
+      if (container) {
+        const textarea = container.querySelector('textarea');
+        if (textarea) {
+          if (id) {
+            textarea.setAttribute('id', id);
+          }
+          if (name) {
+            textarea.setAttribute('name', name);
+          }
+        }
+      }
+    }, 0);
+    
     return () => {
       resizeObserver.disconnect();
     };
   };
+
 
   return (
     <Editor

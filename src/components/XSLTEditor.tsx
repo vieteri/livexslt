@@ -1,29 +1,73 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import CodeEditor from './CodeEditor';
-import xsltTransform from '../utils/xsltTransform';
+import CodeEditor from '@/components/CodeEditor';
+import xsltTransform from '@/utils/xsltTransform';
+
+const initialXslContent = `<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:template match="/">
+    <html>
+      <body>
+        <h2>My CD Collection</h2>
+        <table border="1">
+          <tr bgcolor="#9acd32">
+            <th>Title</th>
+            <th>Artist</th>
+          </tr>
+          <xsl:for-each select="catalog/cd">
+            <tr>
+              <td><xsl:value-of select="title"/></td>
+              <td><xsl:value-of select="artist"/></td>
+            </tr>
+          </xsl:for-each>
+        </table>
+      </body>
+    </html>
+  </xsl:template>
+</xsl:stylesheet>`;
+
+const initialXmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<catalog>
+  <cd>
+    <title>Empire Burlesque</title>
+    <artist>Bob Dylan</artist>
+  </cd>
+  <cd>
+    <title>Hide your heart</title>
+    <artist>Bonnie Tyler</artist>
+  </cd>
+  <cd>
+    <title>Greatest Hits</title>
+    <artist>Dolly Parton</artist>
+  </cd>
+</catalog>`;
+
 
 const XSLTEditor = () => {
-  const [xslContent, setXslContent] = useState('');
-  const [xmlContent, setXmlContent] = useState('');
+  const [xslContent, setXslContent] = useState(initialXslContent);
+  const [xmlContent, setXmlContent] = useState(initialXmlContent);
   const [output, setOutput] = useState('');
-  const [lastValidOutput, setLastValidOutput] = useState('');
   const [error, setError] = useState<{ line?: number; column?: number; message: string } | null>(null);
 
   useEffect(() => {
     if (xslContent && xmlContent) {
-      const { result, error } = xsltTransform(xslContent, xmlContent);
-      if (error) {
-        setError(error);
-        setOutput(lastValidOutput);
-      } else {
-        setOutput(result);
-        setLastValidOutput(result);
-        setError(null);
+      try {
+        const { result, error } = xsltTransform(xslContent, xmlContent);
+        if (error) {
+          setError(error);
+          setOutput('');
+        } else {
+          setOutput(result);
+          setError(null);
+        }
+      } catch (e) {
+        setError({ message: e instanceof Error ? e.message : String(e) });
+        setOutput('');
       }
     }
-  }, [xslContent, xmlContent, lastValidOutput]);
+  }, [xslContent, xmlContent]);
+
 
   const handleSaveOutput = () => {
     const blob = new Blob([output], { type: 'text/xml' });
@@ -55,28 +99,32 @@ const XSLTEditor = () => {
       )}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 flex-grow">
         <div className="space-y-2 h-full">
-          <h2 className="text-xl font-bold text-white">XSLT</h2>
+          <h2 className="text-xl font-bold text-white text-center">XSLT</h2>
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
               value={xslContent}
               onChange={(value) => setXslContent(value || '')}
               language="xml"
+              id="xsl-content"
+              name="xslContent"
             />
           </div>
         </div>
         <div className="space-y-2 h-full">
-          <h2 className="text-xl font-bold text-white">XML</h2>
+          <h2 className="text-xl font-bold text-white text-center">XML</h2>
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
               value={xmlContent}
               onChange={(value) => setXmlContent(value || '')}
               language="xml"
+              id="xml-content"
+              name="xmlContent"
             />
           </div>
         </div>
         <div className="space-y-2 h-full">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-white">Output</h2>
+          <div className="flex justify-start items-center">
+            <h2 className="text-xl font-bold text-white flex-grow text-center">Output</h2>
             {output && (
               <button
                 onClick={handleSaveOutput}
@@ -91,6 +139,8 @@ const XSLTEditor = () => {
               value={output}
               language="xml"
               readOnly={true}
+              id="output-content"
+              name="outputContent"
             />
           </div>
         </div>
@@ -99,4 +149,4 @@ const XSLTEditor = () => {
   );
 };
 
-export default XSLTEditor; 
+export default XSLTEditor;

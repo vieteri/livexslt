@@ -1,5 +1,5 @@
-import ErrorBoundary from '../components/ErrorBoundary';
-import XSLTEditor from '../components/XSLTEditor';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import XSLTEditor from '@/components/XSLTEditor';
 
 export default function Home() {
   return (

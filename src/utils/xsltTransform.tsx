@@ -60,7 +60,6 @@ const xsltTransform = (xsltString: string, xmlString: string): { result: string;
     
     return { result: prettyPrint(result) };
   } catch (error) {
-    console.error('XSLT Transform error:', error);
     return { 
       result: '',
       error: parseXSLTError(error instanceof Error ? error : new Error(String(error)))
