@@ -43,40 +43,80 @@ const initialXmlContent = `<?xml version="1.0" encoding="UTF-8"?>
   </cd>
 </catalog>`;
 
+const initialOutput = `<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  </head>
+  <body>
+    <h2>My CD Collection</h2>
+    <table border="1">
+      <tbody>
+        <tr bgcolor="#9acd32">
+          <th>Title</th>
+          <th>Artist</th>
+        </tr>
+        <tr>
+          <td>Empire Burlesque</td>
+          <td>Bob Dylan</td>
+        </tr>
+        <tr>
+          <td>Hide your heart</td>
+          <td>Bonnie Tyler</td>
+        </tr>
+        <tr>
+          <td>Greatest Hits</td>
+          <td>Dolly Parton</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>`;
 
 const XSLTEditor = () => {
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [xslContent, setXslContent] = useState(initialXslContent);
   const [xmlContent, setXmlContent] = useState(initialXmlContent);
-  const [output, setOutput] = useState('');
-  const [lastSuccessfulOutput, setLastSuccessfulOutput] = useState('');
+  const [output, setOutput] = useState(initialOutput);
+  const [lastSuccessfulOutput, setLastSuccessfulOutput] = useState(initialOutput);
   const [error, setError] = useState<{ line?: number; column?: number; message: string } | null>(null);
 
+  // Perform transformation on initial load and whenever XSL or XML changes
   useEffect(() => {
     if (xslContent && xmlContent) {
       try {
         const { result, error } = xsltTransform(xslContent, xmlContent);
         if (error) {
           setError(error);
+          // If there's an error, use the last successful output
           setOutput(lastSuccessfulOutput);
         } else {
+          // Update output and last successful output
           setOutput(result);
           setLastSuccessfulOutput(result);
           setError(null);
         }
       } catch (e) {
-        setError({ message: e instanceof Error ? e.message : String(e) });
+        // Catch any unexpected errors during transformation
+        setError({ 
+          message: e instanceof Error ? e.message : String(e) 
+        });
+        // Fall back to last successful output
         setOutput(lastSuccessfulOutput);
       }
-    }
-  }, [xslContent, xmlContent, lastSuccessfulOutput]);
 
+      // Mark initial load as complete
+      if (isInitialLoad) {
+        setIsInitialLoad(false);
+      }
+    }
+  }, [xslContent, xmlContent, isInitialLoad]);
 
   const handleSaveOutput = () => {
-    const blob = new Blob([output], { type: 'text/xml' });
+    const blob = new Blob([output], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'transformed-output.xml';
+    a.download = 'transformed-output.html';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -105,7 +145,7 @@ const XSLTEditor = () => {
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
               value={xslContent}
-              onChange={(value) => setXslContent(value || '')}
+              onChange={(value) => setXslContent(value || initialXslContent)}
               language="xml"
               id="xsl-content"
               name="xslContent"
@@ -117,7 +157,7 @@ const XSLTEditor = () => {
           <div className="h-[calc(100%-40px)]">
             <CodeEditor
               value={xmlContent}
-              onChange={(value) => setXmlContent(value || '')}
+              onChange={(value) => setXmlContent(value || initialXmlContent)}
               language="xml"
               id="xml-content"
               name="xmlContent"
