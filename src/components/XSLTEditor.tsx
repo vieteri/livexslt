@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import CodeEditor from '@/components/CodeEditor';
 import xsltTransform, { XSLTParameter } from '@/utils/xsltTransform';
 
@@ -287,7 +287,7 @@ const XSLTEditor = () => {
         setIsInitialLoad(false);
       }
     }
-  }, [xslContent, xmlContent, parameters, isInitialLoad]);
+  }, [xslContent, xmlContent, parameters, isInitialLoad, lastSuccessfulOutput]);
 
   const handleMouseDown = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
@@ -297,7 +297,7 @@ const XSLTEditor = () => {
     startWidthsRef.current = [...panelWidths];
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
+  const handleMouseMove = useCallback((e: MouseEvent) => {
     if (!isDragging || dragIndex === -1 || !containerRef.current) return;
     
     const containerWidth = containerRef.current.offsetWidth;
@@ -315,8 +315,8 @@ const XSLTEditor = () => {
       
       if (actualChange > 0) {
         // XSLT wants to grow - take space from XML first, then from Output if needed
-        let spaceNeeded = actualChange;
-        let spaceFromXml = Math.max(0, Math.min(spaceNeeded, newWidths[1] - 1));
+        const spaceNeeded = actualChange;
+        const spaceFromXml = Math.max(0, Math.min(spaceNeeded, newWidths[1] - 1));
         let spaceFromOutput = 0;
         
         if (spaceNeeded > spaceFromXml) {
@@ -348,8 +348,8 @@ const XSLTEditor = () => {
       
       if (actualChange > 0) {
         // XML wants to grow - take space from Output first, then from XSLT if needed
-        let spaceNeeded = actualChange;
-        let spaceFromOutput = Math.max(0, Math.min(spaceNeeded, newWidths[2] - 1));
+        const spaceNeeded = actualChange;
+        const spaceFromOutput = Math.max(0, Math.min(spaceNeeded, newWidths[2] - 1));
         let spaceFromXslt = 0;
         
         if (spaceNeeded > spaceFromOutput) {
@@ -376,7 +376,7 @@ const XSLTEditor = () => {
     }
     
     setPanelWidths(newWidths);
-  };
+  }, [isDragging, dragIndex]);
 
   const handleMouseUp = () => {
     setIsDragging(false);
@@ -398,7 +398,7 @@ const XSLTEditor = () => {
         document.body.style.userSelect = '';
       };
     }
-  }, [isDragging, dragIndex, panelWidths]);
+  }, [isDragging, dragIndex, handleMouseMove]);
 
   // Double-click to minimize/restore panel
   const handlePanelDoubleClick = (panelIndex: number) => {
@@ -547,7 +547,7 @@ const XSLTEditor = () => {
           
           {parameters.length === 0 ? (
             <div className="text-gray-400 text-center py-4">
-              No parameters defined. Click "Add Parameter" to add XSLT parameters.
+              No parameters defined. Click &quot;Add Parameter&quot; to add XSLT parameters.
             </div>
           ) : (
             <div className="space-y-2">
@@ -582,8 +582,8 @@ const XSLTEditor = () => {
           
           <div className="mt-3 text-xs text-gray-400">
             <div>• Parameters are passed to your XSLT stylesheet during transformation</div>
-            <div>• Use &lt;xsl:param name="parameterName"/&gt; in your XSLT to receive parameters</div>
-            <div>• Example: &lt;xsl:value-of select="$parameterName"/&gt; to use the parameter value</div>
+            <div>• Use &lt;xsl:param name=&quot;parameterName&quot;/&gt; in your XSLT to receive parameters</div>
+            <div>• Example: &lt;xsl:value-of select=&quot;$parameterName&quot;/&gt; to use the parameter value</div>
           </div>
         </div>
       )}
