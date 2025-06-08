@@ -16,6 +16,11 @@ const prettyPrint = (xml: string): string => {
   return formatted;
 };
 
+interface XSLTParameter {
+  name: string;
+  value: string;
+}
+
 interface XSLTError {
   line?: number;
   column?: number;
@@ -34,7 +39,11 @@ const parseXSLTError = (error: Error): XSLTError => {
   return { message: error.message };
 };
 
-const xsltTransform = (xsltString: string, xmlString: string): { result: string; error?: XSLTError } => {
+const xsltTransform = (
+  xsltString: string, 
+  xmlString: string, 
+  parameters: XSLTParameter[] = []
+): { result: string; error?: XSLTError } => {
   try {
     const parser = new window.DOMParser();
     const xsltDoc = parser.parseFromString(xsltString, 'text/xml');
@@ -53,6 +62,14 @@ const xsltTransform = (xsltString: string, xmlString: string): { result: string;
 
     const processor = new XSLTProcessor();
     processor.importStylesheet(xsltDoc);
+    
+    // Set parameters
+    parameters.forEach(param => {
+      if (param.name && param.value) {
+        processor.setParameter(null, param.name, param.value);
+      }
+    });
+    
     const resultDoc = processor.transformToDocument(xmlDoc);
 
     const result = '<?xml version="1.0" encoding="UTF-8"?>\n' + 
@@ -68,3 +85,4 @@ const xsltTransform = (xsltString: string, xmlString: string): { result: string;
 };
 
 export default xsltTransform;
+export type { XSLTParameter };
