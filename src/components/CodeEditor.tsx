@@ -20,13 +20,14 @@ interface CodeEditorProps {
 
 const CodeEditor = ({ value, onChange, language, readOnly = false, id, name }: CodeEditorProps) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
-  const initialValueRef = useRef(value);
-
 
   const handleEditorDidMount: OnMount = (editor) => {
     editorRef.current = editor;
-    editor.layout();
-    editor.setValue(initialValueRef.current);
+    
+    // Initial layout
+    setTimeout(() => {
+      editor.layout();
+    }, 100);
     
     const resizeObserver = new ResizeObserver(() => {
       editor.layout();
@@ -34,50 +35,59 @@ const CodeEditor = ({ value, onChange, language, readOnly = false, id, name }: C
     
     resizeObserver.observe(editor.getContainerDomNode());
     
-    setTimeout(() => {
-      const container = editor.getContainerDomNode();
-      if (container) {
-        const textarea = container.querySelector('textarea');
-        if (textarea) {
-          if (id) {
-            textarea.setAttribute('id', id);
-          }
-          if (name) {
-            textarea.setAttribute('name', name);
-          }
-        }
+    // Add accessibility attributes for testing
+    const container = editor.getContainerDomNode();
+    if (container) {
+      const textarea = container.querySelector('textarea');
+      if (textarea) {
+        if (id) textarea.setAttribute('id', id);
+        if (name) textarea.setAttribute('name', name);
       }
-    }, 0);
+    }
     
     return () => {
       resizeObserver.disconnect();
     };
   };
 
-
   return (
-    <Editor
-      height="100%"
-      width="100%"
-      language={language}
-      value={value}
-      onChange={onChange}
-      onMount={handleEditorDidMount}
-      theme="vs-dark"
-      options={{
-        minimap: { enabled: false },
-        scrollBeyondLastLine: false,
-        fontSize: 14,
-        readOnly,
-        theme: 'vs-dark',
-        automaticLayout: true,
-        copyWithSyntaxHighlighting: true,
-        bracketPairColorization: {
-          enabled: true
-        },
-      }}
-      loading={<div>Loading editor...</div>}
-    />
+    <div className="w-full h-full border border-gray-700 rounded-md overflow-hidden bg-[#1e1e1e]">
+      <Editor
+        height="100%"
+        width="100%"
+        language={language}
+        value={value}
+        onChange={onChange}
+        onMount={handleEditorDidMount}
+        theme="vs-dark"
+        options={{
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          fontSize: 13,
+          fontFamily: 'var(--font-geist-mono)',
+          readOnly,
+          theme: 'vs-dark',
+          automaticLayout: true,
+          padding: { top: 10, bottom: 10 },
+          lineNumbersMinChars: 3,
+          glyphMargin: false,
+          folding: true,
+          lineDecorationsWidth: 10,
+          wordWrap: 'on',
+          scrollbar: {
+            vertical: 'visible',
+            horizontal: 'visible',
+            useShadows: false,
+            verticalScrollbarSize: 10,
+            horizontalScrollbarSize: 10,
+          },
+          bracketPairColorization: {
+            enabled: true
+          },
+        }}
+        loading={<div className="flex items-center justify-center h-full text-gray-500">Loading editor...</div>}
+      />
+    </div>
   );
 };
 

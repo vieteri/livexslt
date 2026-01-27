@@ -1,105 +1,102 @@
-# XSLT Transform Tool 🔄
+# Live XSLT Editor �
 
-A powerful web-based XSLT transformation tool built with Next.js and Monaco Editor. Transform XML documents using XSLT stylesheets in real-time with a modern, intuitive interface.
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
+[![Monaco Editor](https://img.shields.io/badge/Editor-Monaco-blue?logo=visual-studio-code)](https://microsoft.github.io/monaco-editor/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## 🌐 Live Demo
-**[xml.viet.fi](https://xml.viet.fi)** - Try it out now!
+A high-performance, real-time XSLT transformation workstation. Designed for developers who need a fast, reliable, and responsive environment for testing and debugging XSLT stylesheets.
 
-## ✨ Features
+---
 
-- 🔄 Real-time XSLT transformation
-- 🎨 Syntax highlighting for XML/XSLT
-- ⚠️ Smart error reporting with line numbers
-- 🌙 Dark theme Monaco editor
-- 💾 Downloadable output
-- 📱 Responsive design
+## ✨ Key Features
 
-## 🛠️ How It Works
+### 🛠️ Professional Code Editing
+- **Dual Monaco Editors**: Independent instance for XSLT and XML with full syntax highlighting.
+- **Intelligent Error Handling**: Real-time syntax validation with detailed error overlays.
+- **Live Transformation**: Changes apply instantly, providing immediate feedback on your logic.
 
-The application features a clean, three-panel interface:
+### ⚙️ Dynamic Parameter Management
+- **Dedicated Sidebar**: Manage XSLT parameters without touching the code.
+- **Interactive UI**: Add, edit, and remove parameters on the fly via a clean, intuitive interface.
 
-### Editor Panels
-1. **XML Input** 📄
-   - Paste or write your XML document
-   - Syntax validation in real-time
-   - Auto-formatting support
-   - Error detection
-   
-2. **XSLT Stylesheet** 📝
-   - Write your XSLT transformation rules
-   - Immediate error feedback
-   - Syntax highlighting
-   - Code completion
-   
-3. **Output Preview** 👁️
-   - See transformed results instantly
-   - Download transformed XML
-   - Format output automatically
-   - Copy to clipboard
+### � Fully Responsive Workstation
+- **Desktop Grid**: Optimized multi-column layout for large screens with draggable panels.
+- **Mobile Optimized**: Switch between editors using a tabbed interface.
+- **Drawer System**: Full-screen parameter management for smaller devices.
 
-### Key Features in Detail
+### � Preview & Export
+- **IFrame Preview**: Render HTML outputs directly in an integrated preview window.
+- **One-Click Export**: Quickly copy or download your transformed results.
 
-#### 🔍 Smart Editor
-- Real-time preview as you type
-- Intelligent error detection
-- Line-by-line error reporting
-- Syntax highlighting
-- Auto-indentation
-- Code folding
+---
 
-#### 🎯 Monaco Editor Integration
-- Code completion
-- Error highlighting
-- Dark theme support
-- Multiple language support
-- Minimap navigation
-- Multi-cursor editing
+## �️ Tech Stack
 
-## 🚀 Tech Stack
+- **Framework**: [Next.js](https://nextjs.org/) (App Router, Turbopack)
+- **Editor**: [Monaco Editor](https://microsoft.github.io/monaco-editor/) (Used by VS Code)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Logic**: Native Browser `XSLTProcessor` API
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
 
-### Frontend
-- ⚛️ Next.js 14 (App Router)
-- 📘 TypeScript
-- 🎨 TailwindCSS
-- 📝 Monaco Editor
+---
 
-### Core Features
-- 🔄 XSLTProcessor API
-- 🎯 Real-time transformation
-- 🔍 Error handling
-- 💾 File operations
+## � Getting Started
 
-### Development
-- 📦 npm/bun package managers
-- 🛠️ ESLint configuration
-- 🎨 Prettier formatting
-- 🧪 Jest testing framework
+### Prerequisites
 
-## 🏁 Getting Started
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- [npm](https://www.npmjs.com/) or [bun](https://bun.sh/)
 
-1. **Clone the repository:**
-```bash
-git clone https://github.com/vieteri/livexslt.git
-cd livexslt
+### Installation
+
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/vieteri/livexslt.git
+    cd livexslt
+    ```
+
+2.  **Install Dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
+
+4.  **Open the App**
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## � Usage Guide
+
+1.  **Select Source**: Use the **XSLT** tab to write your transform logic and the **XML** tab for your source data.
+2.  **Add Parameters**: Open the **Parameters** panel (toggle icon) to define variables for your XSLT.
+3.  **Refine Logic**: Observe the transformation in the **Output** panel. 
+4.  **Integrated Preview**: If your output is HTML/SVG, use the **Preview** toggle in the output panel to see the rendered result.
+5.  **Resize Panels**: In desktop view, drag the vertical bars between editors to customize your workspace.
+
+---
+
+## 📂 Project Structure
+
+```text
+src/
+├── app/            # Next.js App Router & Global Styles
+├── components/     # Core UI Components (XSLTEditor, CodeEditor)
+├── hooks/          # Custom React Hooks
+└── lib/            # Utility functions & XSLT logic
 ```
 
-2. **Install dependencies** (choose one):
-```bash
-npm install
-# or
-bun install
-```
+---
 
-3. **Start development server** (choose one):
-```bash
-npm run dev
-# or
-bun dev
-```
+## 🤝 Contributing
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 🚀 Deployment
+## 📄 License
 
-Deploy easily on [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme), the creators of Next.js.
-
+This project is licensed under the MIT License.

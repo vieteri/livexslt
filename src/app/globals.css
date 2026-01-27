@@ -2,13 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+/* Panel Header */
+.panel-header {
+  @apply flex items-center justify-between px-3 py-1.5 bg-gray-800 border-b border-gray-700 select-none;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.panel-title {
+  @apply text-xs font-bold text-gray-400 tracking-wider uppercase;
+}
+
+.panel-actions {
+  @apply flex items-center gap-1;
+}
+
+/* Action Button */
+.action-btn {
+  @apply p-1 rounded hover:bg-gray-700 text-gray-400 hover:text-white transition-all text-[10px] font-medium;
+}
+
+/* Side Panel */
+.side-panel {
+  @apply bg-gray-900 border-r border-gray-700 flex flex-col h-full overflow-hidden;
+}
+
+.side-panel-header {
+  @apply flex items-center justify-between p-4 border-b border-gray-800;
+}
+
+.side-panel-content {
+  @apply flex-grow overflow-y-auto p-4 custom-scrollbar;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+/* Resize Handle Overlay */
+.resize-handle-active {
+  background-color: #3b82f6;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
