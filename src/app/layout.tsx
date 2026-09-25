@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import './mobile.css';
 export const metadata: Metadata = {
   title: 'XML Studio — inspect XML & test XSLT',
   description: 'A private, browser-based workspace for XML, XPath and XSLT. Open your files, inspect their structure and test transformations. No uploads or account needed.',

@@ -1,0 +1,11 @@
+/* Safari retains the header's min-content widths more strictly than Chromium.
+   Keep labelled actions instead of squeezing them into inaccessible icon buttons. */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.brand{min-width:0}.brand-mark,.header-actions{flex-shrink:0}
+@media(max-width:480px){
+  .app-header{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;padding:14px 0 10px}
+  .brand h1,.brand p{white-space:nowrap}
+  .header-actions{width:100%;justify-content:space-between;gap:8px}
+  .header-actions .button{min-height:40px;padding:8px 10px}
+  .header-actions .icon-button{width:40px;height:40px}
+}
