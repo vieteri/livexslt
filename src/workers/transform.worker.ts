@@ -1,8 +1,8 @@
 import { Xslt, XmlParser } from 'xslt-processor';
 import { MAX_INPUT, MAX_OUTPUT, utf8Size } from '../lib/model';
 type Request = { xml: string; xslt: string; parameters: Array<{ name: string; namespaceUri?: string; value: string | number | boolean }> };
-const denyExternal = async (): Promise<never> => { throw new Error('External document loading is disabled. Use self-contained XML and XSLT.'); };
-// No fetching, even if a new engine path bypasses the configured loaders.
+// The document loader is synchronous; throwing also satisfies async fetch callers.
+const denyExternal = (): never => { throw new Error('External document loading is disabled. Use self-contained XML and XSLT.'); };
 globalThis.fetch = denyExternal;
 self.onmessage = async (event: MessageEvent<Request>) => {
   try {
