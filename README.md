@@ -1,102 +1,58 @@
-# Live XSLT Editor �
+# XML Studio (Live XSLT)
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?logo=next.js)](https://nextjs.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?logo=tailwind-css)](https://tailwindcss.com/)
-[![Monaco Editor](https://img.shields.io/badge/Editor-Monaco-blue?logo=visual-studio-code)](https://microsoft.github.io/monaco-editor/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+A small, local-first XML workspace. The redesign is on `demo/xml-workspace`; it does not change the production branch or `xml.viet.fi`.
 
-A high-performance, real-time XSLT transformation workstation. Designed for developers who need a fast, reliable, and responsive environment for testing and debugging XSLT stylesheets.
+## Use it
 
----
+**Transform XML:** paste or open XML and an XSLT stylesheet, then click **Run transformation** (Ctrl/Cmd + Enter). Auto-run is optional and off initially. Complete examples are available on demand. No sample documents or parameter overrides are inserted into a new workspace.
 
-## ✨ Key Features
+**Inspect & XPath:** paste XML, switch to Tree, and select a node to obtain its exact XPath. Evaluate your own XPath 1.0, inspect scalar results, select matching siblings, copy paths/values, and highlight results in the original source. Namespace bindings are detected and editable. The XPath field starts empty and does not run an empty query.
 
-### 🛠️ Professional Code Editing
-- **Dual Monaco Editors**: Independent instance for XSLT and XML with full syntax highlighting.
-- **Intelligent Error Handling**: Real-time syntax validation with detailed error overlays.
-- **Live Transformation**: Changes apply instantly, providing immediate feedback on your logic.
+**Parameters:** top-level `xsl:param` declarations are detected, not overridden. Enable an override to supply a string, number or boolean. An enabled empty string is intentionally different from a disabled override.
 
-### ⚙️ Dynamic Parameter Management
-- **Dedicated Sidebar**: Manage XSLT parameters without touching the code.
-- **Interactive UI**: Add, edit, and remove parameters on the fly via a clean, intuitive interface.
+**Results:** Copy and Download always export the engine's unmodified output. Formatted XML is only a view; mixed content and `xml:space="preserve"` are preserved. HTML/SVG preview is restricted and sanitized. Changed inputs and failed transformations clearly label retained previous results.
 
-### � Fully Responsive Workstation
-- **Desktop Grid**: Optimized multi-column layout for large screens with draggable panels.
-- **Mobile Optimized**: Switch between editors using a tabbed interface.
-- **Drawer System**: Full-screen parameter management for smaller devices.
+## Privacy and boundaries
 
-### � Preview & Export
-- **IFrame Preview**: Render HTML outputs directly in an integrated preview window.
-- **One-Click Export**: Quickly copy or download your transformed results.
+- XML and XSLT are processed in the browser. There is no document-upload, analytics, AI or cloud-persistence endpoint.
+- CodeMirror and the XSLT engine are locally bundled, not loaded from a third-party CDN.
+- Persistence is off until **Remember on this device** is selected. Restoring never enables auto-run. Help includes a clear-saved-data action.
+- DTDs, entity declarations, external stylesheets and external document loading are blocked. Previews are sanitized with DOMPurify and rendered in an opaque sandbox with a restrictive CSP. Copy/download remain raw; treat exported HTML as untrusted.
+- Limits: 1 MiB per input, 20,000 XML elements, 128 levels, 4 MiB output, and a cancellable 10-second transformation budget.
+- Output files use UTF-8. Set a matching `xsl:output` encoding or omit it.
 
----
+## Compatibility
 
-## �️ Tech Stack
+The runner uses **xslt-processor 5.1.2** in a Web Worker. It no longer depends on native browser `XSLTProcessor`. This preview targets common, self-contained **XSLT 1.0** workflows. It is not a guarantee of complete XSLT conformance and does not expose XSLT 2.0/3.0, engine extensions, imported stylesheets or multi-document loading. Test representative production stylesheets before adopting it.
 
-- **Framework**: [Next.js](https://nextjs.org/) (App Router, Turbopack)
-- **Editor**: [Monaco Editor](https://microsoft.github.io/monaco-editor/) (Used by VS Code)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Logic**: Native Browser `XSLTProcessor` API
-- **Language**: [TypeScript](https://www.typescriptlang.org/)
+The inspector uses the separate browser **XPath 1.0** API, independent of native XSLT removal. Default XML namespaces must be mapped to an explicit prefix in XPath; the app generates `ns`, `ns2`, etc. where needed.
 
----
+## Develop and verify
 
-## � Getting Started
+Node.js 22 or newer:
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (LTS recommended)
-- [npm](https://www.npmjs.com/) or [bun](https://bun.sh/)
-
-### Installation
-
-1.  **Clone the Repository**
-    ```bash
-    git clone https://github.com/vieteri/livexslt.git
-    cd livexslt
-    ```
-
-2.  **Install Dependencies**
-    ```bash
-    npm install
-    ```
-
-3.  **Run Development Server**
-    ```bash
-    npm run dev
-    ```
-
-4.  **Open the App**
-    Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## � Usage Guide
-
-1.  **Select Source**: Use the **XSLT** tab to write your transform logic and the **XML** tab for your source data.
-2.  **Add Parameters**: Open the **Parameters** panel (toggle icon) to define variables for your XSLT.
-3.  **Refine Logic**: Observe the transformation in the **Output** panel. 
-4.  **Integrated Preview**: If your output is HTML/SVG, use the **Preview** toggle in the output panel to see the rendered result.
-5.  **Resize Panels**: In desktop view, drag the vertical bars between editors to customize your workspace.
-
----
-
-## 📂 Project Structure
-
-```text
-src/
-├── app/            # Next.js App Router & Global Styles
-├── components/     # Core UI Components (XSLTEditor, CodeEditor)
-├── hooks/          # Custom React Hooks
-└── lib/            # Utility functions & XSLT logic
+```sh
+npm ci                 # npm install on initial preview bootstrap before its lock is committed
+npm run dev
+npm run typecheck
+npm run lint
+npm run build
+npx playwright install chromium webkit
+npm test
 ```
 
----
+The GitHub workflow runs type checking, lint, a production build and browser tests on Chromium and WebKit. Screenshots, traces on failure and the HTML report are uploaded as artifacts. Only after successful checks may it commit the generated dependency lock, and only to `demo/xml-workspace`; it never writes to `master`.
 
-## 🤝 Contributing
+The existing Vercel Git integration provides preview deployments for the demo branch. Do not promote or merge until reviewed. The production domain is not reassigned by this branch.
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+## Structure
 
-## 📄 License
+- `src/components/Workspace.tsx`: workspace interaction and state.
+- `src/components/CodeEditor.tsx`: bundled CodeMirror with source highlights.
+- `src/components/XmlTree.tsx`: incremental tree explorer.
+- `src/lib/xml.ts`: validation, parameter discovery, safe formatting, namespaces and XPath.
+- `src/lib/preview.ts`: sanitized, network-restricted preview, separate from raw export.
+- `src/workers/transform.worker.ts`: isolated transformation and blocked external loaders.
+- `tests/workspace.spec.ts`: end-to-end regression and safety checks.
 
-This project is licensed under the MIT License.
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency licenses and source information.

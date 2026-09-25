@@ -1,0 +1,62 @@
+name: XML workspace checks
+on:
+  push:
+    branches: ['demo/xml-workspace']
+  pull_request:
+    branches: [master]
+permissions:
+  contents: read
+concurrency:
+  group: xml-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: |
+          if test -f package-lock.json; then npm ci; else npm install; fi
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium webkit
+      - run: npm test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-results
+          path: |
+            playwright-report/
+            test-results/
+            package-lock.json
+          retention-days: 7
+  lock-preview-dependencies:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/demo/xml-workspace'
+    needs: browser-tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: demo/xml-workspace
+      - uses: actions/download-artifact@v4
+        with:
+          name: browser-results
+          path: .ci-results
+      - name: Commit only the validated dependency lock to the demo branch
+        run: |
+          # Never apply a stale lock over a newer implementation.
+          test "$(git rev-parse HEAD)" = "${{ github.sha }}" || exit 0
+          cp .ci-results/package-lock.json package-lock.json
+          git add package-lock.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'chore: lock browser-tested preview dependencies'
+          git push origin HEAD:demo/xml-workspace
